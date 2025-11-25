@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desert Oasis Adventure - Made with Ludo.ai</title>
+    <meta name="description" content="Interactive playable game created with Ludo.ai - AI-powered game development platform">
+    <meta name="generator" content="Ludo.ai">
+    <meta name="author" content="Ludo.ai">
+    <meta name="keywords" content="playable game, interactive, AI-generated, Ludo.ai, pixijs">
+    <meta name="created-date" content="2025-11-25">
+    <meta name="game-engine" content="pixijs">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸŽ®</text></svg>">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .game-header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+        .game-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: #fff;
+        }
+        .game-info {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+        }
+        .game-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 8px 0 0 0;
+            line-height: 1.4;
+        }
+        .game-engine {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-left: 8px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        #gameContainer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+        }
+        body > canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .ludo-footer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            text-decoration: none;
+            border-top-left-radius: 4px;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        .ludo-footer:hover {
+            background: rgba(0, 0, 0, 0.9);
+            color: rgba(255, 255, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-header">
+        <h1 class="game-title">Desert Oasis Adventure</h1>
+        <p class="game-info">
+            Created with Ludo.ai on 2025-11-25
+            <span class="game-engine">pixijs</span>
+        </p>
+        <p class="game-description">A 2D platformer game with an Arabic theme where players navigate desert landscapes, collect coins, defeat enemies, and reach the goal to progress through levels.</p>
+        <p class="game-description"><strong>How to Play:</strong> Use ArrowLeft/ArrowRight to move, Spacebar to jump. Defeat enemies by jumping on them. Collect coins for points. Reach the magic lamp to complete the level.</p>
+    </div>
+    <div id="gameContainer"></div>
+    <a href="https://ludo.ai" target="_blank" class="ludo-footer">
+        Made with Ludo.ai
+    </a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.4.3/pixi.min.js" integrity="sha512-o3fAFcbCbTTJRFRNx4vByRZVtdKYF9uklctNjDXrN1JjT00rJxCCyNJSDi35rPBEqzWvYplcHLlEmyW34Ado8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="https://cdn.jsdelivr.net/npm/pixi-filters@5.3.0/dist/browser/pixi-filters.min.js"></script>
+    <script type="module">
+        // Ludo.ai Playable Game
+        // Generated on: 2025-11-25
+        // Engine: pixijs
+        // Title: Desert Oasis Adventure
+        
+        // Monitor for canvas elements and move them to gameContainer
+        const gameContainer = document.getElementById('gameContainer');
+        
+        // Function to move canvas elements to gameContainer
+        function moveCanvasToContainer() {
+            const canvases = document.querySelectorAll('body > canvas');
+            canvases.forEach(canvas => {
+                if (canvas.parentElement === document.body) {
+                    gameContainer.appendChild(canvas);
+                }
+            });
+        }
+        
+        // Monitor for new canvas elements
+        const observer = new MutationObserver(() => {
+            moveCanvasToContainer();
+        });
+        observer.observe(document.body, { childList: true });
+        
+        // Initial check
+        setTimeout(moveCanvasToContainer, 100);
+        
+        // ===== RUNTIME LIBRARY =====
+// PixiJS Runtime Library
+// This library provides utility functions for PixiJS games
+// All functions are side-effect free and only execute when called
+
+// ===== ASSET MANAGEMENT =====
+
+const __FALLBACK_ASSET__ = {
+  url: "https://storage.googleapis.com/scraper_ludo/user_images_dev/45f550b2dafbaa5d6f59a0af127d9fa2.png",
+  width: 200,
+  height: 200,
+  description: "Fallback asset (placeholder)"
+};
+
+// getAssetUrl(key) -> string
+function getAssetUrl(key) {
+  const asset = __ASSET_MAP__[key];
+  if (!asset) {
+    console.warn(`Asset '${key}' not found in asset map, using fallback asset`);
+    return __FALLBACK_ASSET__.url;
+  }
+  return asset.url;
+}
+
+// getAssetInfo(key) -> {url, width, height, description}
+function getAssetInfo(key) {
+  const asset = __ASSET_MAP__[key];
+  if (!asset) {
+    console.warn(`Asset '${key}' not found in asset map, using fallback asset`);
+    return __FALLBACK_ASSET__;
+  }
+  return {
+    url: asset.url,
+    width: asset.width,
+    height: asset.height,
+    description: asset.description
+  };
+}
+
+// createSprite(key, {x, y, scale, width, height, anchor}) -> Sprite
+// Use width OR height (not both) to maintain aspect ratio. anchor can be number or {x, y}
+function createSprite(key, options = {}) {
+  const assetInfo = getAssetInfo(key);
+  const sprite = PIXI.Sprite.from(assetInfo.url);
+
+  // Initialize userData to store base scale
+  sprite.userData = sprite.userData || {};
+
+  if (options.scale !== undefined) {
+    sprite.scale.set(options.scale);
+    sprite.userData.baseScale = options.scale;
+  }
+
+  if (options.x !== undefined) sprite.x = options.x;
+  if (options.y !== undefined) sprite.y = options.y;
+
+  if (options.anchor !== undefined) {
+    if (typeof options.anchor === 'number') {
+      sprite.anchor.set(options.anchor);
+    } else if (options.anchor.x !== undefined || options.anchor.y !== undefined) {
+      sprite.anchor.set(options.anchor.x || 0, options.anchor.y || 0);
+    }
+  }
+
+  if (options.width !== undefined) {
+    const aspectRatio = assetInfo.width / assetInfo.height;
+    sprite.width = options.width;
+    sprite.height = options.width / aspectRatio;
+    sprite.userData.baseScale = sprite.scale.x;
+    sprite.userData.targetWidth = options.width;
+  } else if (options.height !== undefined) {
+    const aspectRatio = assetInfo.width / assetInfo.height;
+    sprite.height = options.height;
+    sprite.width = options.height * aspectRatio;
+    sprite.userData.baseScale = sprite.scale.x;
+    sprite.userData.targetHeight = options.height;
+  }
+
+  // If no scale was set, store the default
+  if (sprite.userData.baseScale === undefined) {
+    sprite.userData.baseScale = 1;
+  }
+
+  // Override scale.set to work relatively to baseScale
+  const originalScaleSet = sprite.scale.set.bind(sprite.scale);
+
+  sprite.scale.set = function(x, y) {
+    // Read baseScale dynamically from userData to avoid race conditions
+    let baseScale = sprite.userData?.baseScale || 1;
+
+    // Safety check: if texture loaded after baseScale was calculated, recalculate
+    if (sprite.userData.targetWidth && sprite.texture && sprite.texture.valid) {
+      const expectedScale = sprite.userData.targetWidth / sprite.texture.width;
+      // If current baseScale is way off (close to 1 when it should be small), recalculate
+      if (Math.abs(baseScale - expectedScale) > 0.01 && Math.abs(baseScale - 1.0) < 0.01) {
+        baseScale = expectedScale;
+        sprite.userData.baseScale = expectedScale;
+      }
+    }
+
+    if (y === undefined) {
+      // single value: scale.set(1.2)
+      return originalScaleSet(x * baseScale, x * baseScale);
+    } else {
+      // two values: scale.set(1.2, 1.5)
+      return originalScaleSet(x * baseScale, y * baseScale);
+    }
+  };
+
+  // Keep original for absolute scaling if needed
+  sprite.scale.setAbsolute = originalScaleSet;
+
+  return sprite;
+}
+
+// createContainedSprite(key, containerWidth, containerHeight, options) -> Sprite
+// options: {fitMode, align, anchor}
+// fitMode: 'contain' (fit inside, default), 'cover' (fill, may crop), 'fill' (stretch)
+// align: 'center' (default), 'top', 'bottom', 'left', 'right', 'top-left', etc.
+function createContainedSprite(key, containerWidth, containerHeight, options = {}) {
+  const assetInfo = getAssetInfo(key);
+  const sprite = PIXI.Sprite.from(assetInfo.url);
+
+  // Store container dimensions
+  sprite.userData = sprite.userData || {};
+  sprite.userData.containerWidth = containerWidth;
+  sprite.userData.containerHeight = containerHeight;
+
+  // Calculate scale based on fit mode
+  const fitMode = options.fitMode || 'contain';
+  let scale;
+
+  if (fitMode === 'fill') {
+    // Stretch to fill container
+    sprite.scale.set(
+      containerWidth / assetInfo.width,
+      containerHeight / assetInfo.height
+    );
+  } else if (fitMode === 'cover') {
+    // Scale to cover container (may crop)
+    scale = Math.max(
+      containerWidth / assetInfo.width,
+      containerHeight / assetInfo.height
+    );
+    sprite.scale.set(scale);
+  } else {
+    // Contain - fit inside container
+    scale = Math.min(
+      containerWidth / assetInfo.width,
+      containerHeight / assetInfo.height
+    );
+    sprite.scale.set(scale);
+  }
+
+  sprite.userData.baseScale = sprite.scale.x;
+
+  // Set alignment/anchor
+  const align = options.align || 'center';
+
+  if (options.anchor !== undefined) {
+    // Custom anchor provided
+    if (typeof options.anchor === 'number') {
+      sprite.anchor.set(options.anchor);
+    } else {
+      sprite.anchor.set(options.anchor.x || 0, options.anchor.y || 0);
+    }
+  } else {
+    // Set anchor based on alignment
+    switch (align) {
+      case 'center':
+        sprite.anchor.set(0.5, 0.5);
+        sprite.x = containerWidth / 2;
+        sprite.y = containerHeight / 2;
+        break;
+      case 'top-left':
+        sprite.anchor.set(0, 0);
+        break;
+      case 'top':
+        sprite.anchor.set(0.5, 0);
+        sprite.x = containerWidth / 2;
+        break;
+      case 'top-right':
+        sprite.anchor.set(1, 0);
+        sprite.x = containerWidth;
+        break;
+      case 'left':
+        sprite.anchor.set(0, 0.5);
+        sprite.y = containerHeight / 2;
+        break;
+      case 'right':
+        sprite.anchor.set(1, 0.5);
+        sprite.x = containerWidth;
+        sprite.y = containerHeight / 2;
+        break;
+      case 'bottom-left':
+        sprite.anchor.set(0, 1);
+        sprite.y = containerHeight;
+        break;
+      case 'bottom':
+        sprite.anchor.set(0.5, 1);
+        sprite.x = containerWidth / 2;
+        sprite.y = containerHeight;
+        break;
+      case 'bottom-right':
+        sprite.anchor.set(1, 1);
+        sprite.x = containerWidth;
+        sprite.y = containerHeight;
+        break;
+    }
+  }
+
+  // Override scale.set to work relatively to baseScale
+  const originalScaleSet = sprite.scale.set.bind(sprite.scale);
+
+  sprite.scale.set = function(x, y) {
+    // Read baseScale dynamically from userData to avoid race conditions
+    const baseScale = sprite.userData?.baseScale || 1;
+    if (y === undefined) {
+      return originalScaleSet(x * baseScale, x * baseScale);
+    } else {
+      return originalScaleSet(x * baseScale, y * baseScale);
+    }
+  };
+
+  sprite.scale.setAbsolute = originalScaleSet;
+
+  return sprite;
+}
+
+// createTilingSprite(key, width, height, {x, y, tileScale}) -> TilingSprite
+// Tiles the texture to fill width x height while maintaining aspect ratio
+function createTilingSprite(key, width, height, options = {}) {
+  const assetInfo = getAssetInfo(key);
+  const tilingSprite = new PIXI.TilingSprite(
+    PIXI.Texture.from(assetInfo.url),
+    width,
+    height
+  );
+
+  if (options.x !== undefined) tilingSprite.x = options.x;
+  if (options.y !== undefined) tilingSprite.y = options.y;
+
+  // Calculate scale to match target height while maintaining aspect ratio
+  const scaleToFitHeight = height / assetInfo.height;
+
+  if (options.tileScale !== undefined) {
+    tilingSprite.tileScale.set(options.tileScale);
+  } else {
+    // Auto-scale to fill height, tiles will repeat horizontally
+    tilingSprite.tileScale.set(scaleToFitHeight);
+  }
+
+  return tilingSprite;
+}
+
+// preloadAssets(assetMap, onProgress, onComplete) -> Promise
+// onProgress(loaded, total, percent) and onComplete() callbacks
+async function preloadAssets(assetMap, onProgress, onComplete) {
+  const urls = Object.values(assetMap).map(asset => asset.url);
+  const uniqueUrls = [...new Set(urls)];
+
+  let loaded = 0;
+  const total = uniqueUrls.length;
+
+  try {
+    await Promise.all(
+      uniqueUrls.map(async (url) => {
+        await PIXI.Assets.load(url);
+        loaded++;
+        if (onProgress) {
+          onProgress(loaded, total, loaded / total);
+        }
+      })
+    );
+
+    if (onComplete) {
+      onComplete();
+    }
+  } catch (error) {
+    console.error('Error preloading assets:', error);
+  }
+}
+
+// ===== SPRITE SCALING HELPERS =====
+
+/**
+ * Resets sprite to its original base scale (1.0 relative)
+ * @param {PIXI.Sprite} sprite - The sprite to reset
+ */
+function resetSpriteScale(sprite) {
+  sprite.scale.set(1);
+}
+
+/**
+ * Animates a sprite with a pulse effect
+ * @param {PIXI.Sprite} sprite - The sprite to pulse
+ * @param {number} [intensity=0.1] - Pulse intensity (0.1 = 10% larger)
+ * @param {number} [duration=150] - Duration in milliseconds
+ */
+function pulseSpriteScale(sprite, intensity = 0.1, duration = 150) {
+  const pulseScale = 1 + intensity;
+  sprite.scale.set(pulseScale);
+
+  setTimeout(() => {
+    sprite.scale.set(1);
+  }, duration);
+}
+
+/**
+ * Animates sprite scale change smoothly
+ * @param {PIXI.Sprite} sprite - The sprite to animate
+ * @param {number} targetMultiplier - Target scale multiplier
+ * @param {number} [speed=0.2] - Animation speed (0-1, higher = faster)
+ * @param {Function} [onComplete] - Callback when animation completes
+ */
+function animateSpriteScale(sprite, targetMultiplier, speed = 0.2, onComplete) {
+  const baseScale = sprite.userData?.baseScale || 1;
+  const targetScale = baseScale * targetMultiplier;
+  const currentAbsolute = sprite.scale.x;
+
+  const animate = () => {
+    const newAbsolute = lerp(currentAbsolute, targetScale, speed);
+    sprite.scale.setAbsolute(newAbsolute);
+
+    if (Math.abs(newAbsolute - targetScale) > 0.01) {
+      requestAnimationFrame(animate);
+    } else {
+      sprite.scale.setAbsolute(targetScale);
+      if (onComplete) onComplete();
+    }
+  };
+
+  animate();
+}
+
+// ===== COLLISION DETECTION =====
+
+// rectangleCollision(rect1, rect2) -> boolean
+// rect: {x, y, width, height}
+function rectangleCollision(rect1, rect2) {
+  return (
+    rect1.x < rect2.x + rect2.width &&
+    rect1.x + rect1.width > rect2.x &&
+    rect1.y < rect2.y + rect2.height &&
+    rect1.y + rect1.height > rect2.y
+  );
+}
+
+// spriteCollision(sprite1, sprite2) -> boolean
+function spriteCollision(sprite1, sprite2) {
+  const bounds1 = sprite1.getBounds();
+  const bounds2 = sprite2.getBounds();
+
+  return rectangleCollision(
+    { x: bounds1.x, y: bounds1.y, width: bounds1.width, height: bounds1.height },
+    { x: bounds2.x, y: bounds2.y, width: bounds2.width, height: bounds2.height }
+  );
+}
+
+// circleCollision(obj1, obj2) -> boolean
+// Auto-detects radius from obj.radius or obj.width/2
+function circleCollision(obj1, obj2) {
+  const dx = obj1.x - obj2.x;
+  const dy = obj1.y - obj2.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  const radius1 = obj1.radius || obj1.width / 2 || 0;
+  const radius2 = obj2.radius || obj2.width / 2 || 0;
+
+  return distance < radius1 + radius2;
+}
+
+// ===== BOUNDARY HELPERS =====
+
+// setupBoundaryCollision(sprite, bounds) -> 'left'|'right'|'top'|'bottom'|null
+// bounds: {left, right, top, bottom}
+function setupBoundaryCollision(sprite, bounds) {
+  if (sprite.x < bounds.left) {
+    sprite.x = bounds.left;
+    return 'left';
+  }
+  if (sprite.x + sprite.width > bounds.right) {
+    sprite.x = bounds.right - sprite.width;
+    return 'right';
+  }
+  if (sprite.y < bounds.top) {
+    sprite.y = bounds.top;
+    return 'top';
+  }
+  if (sprite.y + sprite.height > bounds.bottom) {
+    sprite.y = bounds.bottom - sprite.height;
+    return 'bottom';
+  }
+  return null;
+}
+
+// wrapAroundScreen(sprite, app) -> void
+function wrapAroundScreen(sprite, app) {
+  if (sprite.x > app.screen.width) {
+    sprite.x = -sprite.width;
+  } else if (sprite.x + sprite.width < 0) {
+    sprite.x = app.screen.width;
+  }
+
+  if (sprite.y > app.screen.height) {
+    sprite.y = -sprite.height;
+  } else if (sprite.y + sprite.height < 0) {
+    sprite.y = app.screen.height;
+  }
+}
+
+// keepOnScreen(sprite, app) -> void
+function keepOnScreen(sprite, app) {
+  if (sprite.x < 0) sprite.x = 0;
+  if (sprite.y < 0) sprite.y = 0;
+  if (sprite.x + sprite.width > app.screen.width) {
+    sprite.x = app.screen.width - sprite.width;
+  }
+  if (sprite.y + sprite.height > app.screen.height) {
+    sprite.y = app.screen.height - sprite.height;
+  }
+}
+
+// ===== PHYSICS HELPERS =====
+
+// applyVelocity(sprite, velocity, delta) -> void
+// Initializes sprite.velocity if needed
+function applyVelocity(sprite, velocity, delta = 1) {
+  if (!sprite.velocity) {
+    sprite.velocity = { ...velocity };
+  }
+
+  sprite.x += sprite.velocity.x * delta;
+  sprite.y += sprite.velocity.y * delta;
+}
+
+// ===== UI HELPERS =====
+
+// createText(text, style, position) -> Text
+// style: {fontSize, fill, ...}, position: {x, y, anchor}
+function createText(text, style = {}, position = {}) {
+  const defaultStyle = {
+    fontSize: 24,
+    fill: 0xffffff,
+    ...style
+  };
+
+  const textObject = new PIXI.Text(text, defaultStyle);
+
+  if (position.x !== undefined) textObject.x = position.x;
+  if (position.y !== undefined) textObject.y = position.y;
+
+  if (position.anchor !== undefined) {
+    if (typeof position.anchor === 'number') {
+      textObject.anchor.set(position.anchor);
+    } else if (position.anchor.x !== undefined || position.anchor.y !== undefined) {
+      textObject.anchor.set(position.anchor.x || 0, position.anchor.y || 0);
+    }
+  }
+
+  return textObject;
+}
+
+// centerObject(object, app) -> void
+function centerObject(object, app) {
+  object.x = (app.screen.width - object.width) / 2;
+  object.y = (app.screen.height - object.height) / 2;
+}
+
+// createButton(text, position, onClick, style) -> Text
+// position: {x, y, anchor}, style: {fontSize, fill, hoverColor}
+function createButton(text, position, onClick, style = {}) {
+  const defaultStyle = {
+    fontSize: 24,
+    fill: 0xffffff,
+    ...style
+  };
+
+  const button = new PIXI.Text(text, defaultStyle);
+  button.x = position.x;
+  button.y = position.y;
+
+  if (position.anchor !== undefined) {
+    if (typeof position.anchor === 'number') {
+      button.anchor.set(position.anchor);
+    } else if (position.anchor.x !== undefined || position.anchor.y !== undefined) {
+      button.anchor.set(position.anchor.x || 0, position.anchor.y || 0);
+    }
+  } else {
+    button.anchor.set(0.5);
+  }
+
+  button.eventMode = 'static';
+  button.cursor = 'pointer';
+
+  button.on('pointerdown', onClick);
+
+  button.on('pointerover', () => {
+    button.style.fill = style.hoverColor || 0xffff00;
+  });
+
+  button.on('pointerout', () => {
+    button.style.fill = style.fill || 0xffffff;
+  });
+
+  return button;
+}
+
+// createRestartButton(app, position, onRestart) -> Text
+function createRestartButton(app, position = {}, onRestart) {
+  const x = position.x !== undefined ? position.x : app.screen.width / 2;
+  const y = position.y !== undefined ? position.y : app.screen.height / 2 + 60;
+
+  return createButton('Restart', { x, y, anchor: 0.5 }, onRestart, {
+    fontSize: 32,
+    fill: 0xffffff
+  });
+}
+
+// showGameOver(app, {title, score, onRestart}) -> Container
+// showGameOver(app, {title, score, onRestart}) -> Container
+// showGameOver(app, {title, score, onRestart, onMainMenu}) -> Container
+function showGameOver(app, options = {}) {
+  const container = new PIXI.Container();
+
+  const background = new PIXI.Graphics();
+  background.beginFill(0x000000, 0.7);
+  background.drawRect(0, 0, app.screen.width, app.screen.height);
+  background.endFill();
+  container.addChild(background);
+
+  const gameOverText = createText(
+    options.title || 'Game Over',
+    { fontSize: 48, fill: 0xff0000 },
+    { x: app.screen.width / 2, y: app.screen.height / 2 - 80, anchor: 0.5 }
+  );
+  container.addChild(gameOverText);
+
+  if (options.score !== undefined) {
+    const scoreText = createText(
+      `Score: ${options.score}`,
+      { fontSize: 32, fill: 0xffffff },
+      { x: app.screen.width / 2, y: app.screen.height / 2 - 20, anchor: 0.5 }
+    );
+    container.addChild(scoreText);
+  }
+
+  if (options.onRestart) {
+    const restartButton = createButton(
+      'Restart',
+      { x: app.screen.width / 2, y: app.screen.height / 2 + 40, anchor: 0.5 },
+      options.onRestart,
+      { fontSize: 28, fill: 0xffffff }
+    );
+    container.addChild(restartButton);
+  }
+
+  if (options.onMainMenu) {
+    const menuButton = createButton(
+      'Main Menu',
+      { x: app.screen.width / 2, y: app.screen.height / 2 + 100, anchor: 0.5 },
+      options.onMainMenu,
+      { fontSize: 28, fill: 0xffffff }
+    );
+    container.addChild(menuButton);
+  }
+
+  return container;
+}
+
+
+// showLevelComplete(app, { level, score, isFinal, onNext }) -> Container
+function showLevelComplete(app, options = {}) {
+  const container = new PIXI.Container();
+
+  // dark overlay
+  const background = new PIXI.Graphics();
+  background.beginFill(0x000000, 0.7);
+  background.drawRect(0, 0, app.screen.width, app.screen.height);
+  background.endFill();
+  container.addChild(background);
+
+  const level = options.level ?? 1;
+  const isFinal = !!options.isFinal;
+
+  // main title
+  const titleText = createText(
+    isFinal ? 'Congratulations!' : `Level ${level} Complete!`,
+    { fontSize: 48, fill: 0xffd700 },
+    { x: app.screen.width / 2, y: app.screen.height / 2 - 80, anchor: 0.5 }
+  );
+  container.addChild(titleText);
+
+  // subtitle / instructions
+  const message = isFinal
+    ? `You completed all levels!\nFinal Score: ${options.score ?? 0}`
+    : `Score: ${options.score ?? 0}`;
+
+  const subText = createText(
+    message,
+    { fontSize: 28, fill: 0xffffff, align: 'center' },
+    { x: app.screen.width / 2, y: app.screen.height / 2 - 20, anchor: 0.5 }
+  );
+  container.addChild(subText);
+
+  // button text
+  const buttonLabel = isFinal ? 'Play Again' : 'Next Level';
+
+  if (typeof options.onNext === 'function') {
+    const nextButton = createButton(
+      buttonLabel,
+      { x: app.screen.width / 2, y: app.screen.height / 2 + 60, anchor: 0.5 },
+      options.onNext,
+      { fontSize: 32, fill: 0xffffff }
+    );
+    container.addChild(nextButton);
+  }
+
+  return container;
+}
+
+
+// ===== KEYBOARD INPUT =====
+
+const __keyboard = {
+  keys: {},
+  _initialized: false
+};
+
+(function initKeyboard() {
+  if (__keyboard._initialized) return;
+
+  window.addEventListener('keydown', (e) => {
+    __keyboard.keys[e.key] = true;
+  });
+
+  window.addEventListener('keyup', (e) => {
+    __keyboard.keys[e.key] = false;
+  });
+
+  __keyboard._initialized = true;
+})();
+
+// isKeyDown(key) -> boolean
+// Check if a key is currently pressed
+// Common keys: 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ' (space), 'w', 'a', 's', 'd'
+function isKeyDown(key) {
+  return __keyboard.keys[key] || false;
+}
+
+// ===== DRAG AND DROP =====
+
+// makeDraggable(sprite, {dragLayer, onDragStart, onDrag, onDragEnd}) -> void
+// IMPORTANT: Sprite must be added to stage/container BEFORE calling this function
+// dragLayer: Container to move sprite to while dragging (optional, defaults to sprite.parent)
+// onDragEnd can return false to snap sprite back to original position
+function makeDraggable(sprite, options = {}) {
+  sprite.eventMode = 'static';
+  sprite.cursor = 'pointer';
+
+  let dragging = false;
+  let dragOffset = { x: 0, y: 0 };
+  let originalParent = null;
+  let originalPosition = { x: 0, y: 0 };
+  let dragLayer = options.dragLayer;
+
+  sprite.on('pointerdown', (event) => {
+    if (!dragLayer) {
+      dragLayer = sprite.parent;
+    }
+
+    dragging = true;
+    originalParent = sprite.parent;
+    originalPosition = { x: sprite.x, y: sprite.y };
+
+    const globalPosition = event.data.global;
+    const spriteGlobalPos = sprite.getGlobalPosition();
+
+    dragOffset.x = globalPosition.x - spriteGlobalPos.x;
+    dragOffset.y = globalPosition.y - spriteGlobalPos.y;
+
+    if (dragLayer && dragLayer !== sprite.parent) {
+      sprite.parent.removeChild(sprite);
+      dragLayer.addChild(sprite);
+      sprite.x = globalPosition.x - dragOffset.x;
+      sprite.y = globalPosition.y - dragOffset.y;
+    }
+
+    if (options.onDragStart) {
+      options.onDragStart(sprite, event);
+    }
+  });
+
+  const onMove = (event) => {
+    if (!dragging) return;
+
+    const globalPosition = event.data.global;
+    sprite.x = globalPosition.x - dragOffset.x;
+    sprite.y = globalPosition.y - dragOffset.y;
+
+    if (options.onDrag) {
+      options.onDrag(sprite, event);
+    }
+  };
+
+  const onEnd = (event) => {
+    if (!dragging) return;
+
+    dragging = false;
+
+    if (options.onDragEnd) {
+      const result = options.onDragEnd(sprite, event, originalParent, originalPosition);
+
+      if (result === false) {
+        if (dragLayer && dragLayer !== originalParent) {
+          sprite.parent.removeChild(sprite);
+          originalParent.addChild(sprite);
+          sprite.x = originalPosition.x;
+          sprite.y = originalPosition.y;
+        } else {
+          sprite.x = originalPosition.x;
+          sprite.y = originalPosition.y;
+        }
+      }
+    }
+  };
+
+  sprite.__dragHandlers = { onMove, onEnd };
+
+  const eventTarget = options.dragGroup || sprite.parent;
+  eventTarget.on('pointermove', onMove);
+  eventTarget.on('pointerup', onEnd);
+  eventTarget.on('pointerupoutside', onEnd);
+}
+
+// removeDraggable(sprite) -> void
+function removeDraggable(sprite) {
+  sprite.eventMode = 'auto';
+  sprite.cursor = 'default';
+  sprite.removeAllListeners('pointerdown');
+
+  if (sprite.__dragHandlers) {
+    const { onMove, onEnd } = sprite.__dragHandlers;
+    sprite.parent.off('pointermove', onMove);
+    sprite.parent.off('pointerup', onEnd);
+    sprite.parent.off('pointerupoutside', onEnd);
+    delete sprite.__dragHandlers;
+  }
+}
+
+// createDropZone(container, {onDrop, highlight}) -> void
+// onDrop(draggedSprite, dropZone, dragData) can return false to reject drop
+// highlight: {normalColor, hoverColor}
+function createDropZone(container, options = {}) {
+  container.__isDropZone = true;
+  container.__dropZoneOptions = options;
+
+  if (options.highlight) {
+    container.eventMode = 'static';
+
+    container.on('pointerover', () => {
+      if (options.highlight.hoverColor !== undefined) {
+        if (container instanceof PIXI.Graphics) {
+          container.tint = options.highlight.hoverColor;
+        } else if (container instanceof PIXI.Sprite) {
+          container.tint = options.highlight.hoverColor;
+        }
+      }
+    });
+
+    container.on('pointerout', () => {
+      if (options.highlight.normalColor !== undefined) {
+        if (container instanceof PIXI.Graphics) {
+          container.tint = options.highlight.normalColor;
+        } else if (container instanceof PIXI.Sprite) {
+          container.tint = options.highlight.normalColor;
+        }
+      }
+    });
+  }
+}
+
+// checkDropZones(draggedSprite, dropZones) -> Container|null
+function checkDropZones(draggedSprite, dropZones) {
+  const draggedBounds = draggedSprite.getBounds();
+
+  for (const zone of dropZones) {
+    const zoneBounds = zone.getBounds();
+    if (rectangleCollision(draggedBounds, zoneBounds)) {
+      return zone;
+    }
+  }
+
+  return null;
+}
+
+// snapToDropZone(sprite, dropZone, {offsetX, offsetY, animate}) -> void
+function snapToDropZone(sprite, dropZone, options = {}) {
+  const offsetX = options.offsetX || 0;
+  const offsetY = options.offsetY || 0;
+
+  if (sprite.parent !== dropZone) {
+    sprite.parent.removeChild(sprite);
+    dropZone.addChild(sprite);
+  }
+
+  if (options.animate) {
+    const targetX = offsetX;
+    const targetY = offsetY;
+
+    const animate = () => {
+      sprite.x = lerp(sprite.x, targetX, 0.2);
+      sprite.y = lerp(sprite.y, targetY, 0.2);
+
+      if (Math.abs(sprite.x - targetX) > 0.1 || Math.abs(sprite.y - targetY) > 0.1) {
+        requestAnimationFrame(animate);
+      } else {
+        sprite.x = targetX;
+        sprite.y = targetY;
+      }
+    };
+    animate();
+  } else {
+    sprite.x = offsetX;
+    sprite.y = offsetY;
+  }
+}
+
+// createDragManager(app, dragLayer) -> DragManager
+// Returns: {addDraggable(sprite, {onDragStart, onDrag, onDropSuccess, onDropFail}), addDropZone(container, options), removeDraggable(sprite), removeDropZone(container), clear()}
+function createDragManager(app, dragLayer) {
+  const manager = {
+    draggables: [],
+    dropZones: [],
+    currentDrag: null,
+
+    addDraggable(sprite, data = {}) {
+      sprite.__dragData = data;
+
+      makeDraggable(sprite, {
+        dragLayer: dragLayer,
+        dragGroup: app.stage,
+
+        onDragStart: (spr, event) => {
+          manager.currentDrag = spr;
+          if (data.onDragStart) data.onDragStart(spr, event);
+        },
+
+        onDrag: (spr, event) => {
+          manager.dropZones.forEach(zone => {
+            const bounds = spr.getBounds();
+            const zoneBounds = zone.getBounds();
+
+            if (rectangleCollision(bounds, zoneBounds)) {
+              if (zone.__dropZoneOptions?.highlight?.hoverColor) {
+                zone.tint = zone.__dropZoneOptions.highlight.hoverColor;
+              }
+            } else {
+              if (zone.__dropZoneOptions?.highlight?.normalColor !== undefined) {
+                zone.tint = zone.__dropZoneOptions.highlight.normalColor;
+              }
+            }
+          });
+
+          if (data.onDrag) data.onDrag(spr, event);
+        },
+
+        onDragEnd: (spr, event, originalParent, originalPosition) => {
+          const dropZone = checkDropZones(spr, manager.dropZones);
+
+          manager.dropZones.forEach(zone => {
+            if (zone.__dropZoneOptions?.highlight?.normalColor !== undefined) {
+              zone.tint = zone.__dropZoneOptions.highlight.normalColor;
+            }
+          });
+
+          if (dropZone) {
+            if (dropZone.__dropZoneOptions?.onDrop) {
+              const result = dropZone.__dropZoneOptions.onDrop(spr, dropZone, spr.__dragData);
+
+              if (result !== false && data.onDropSuccess) {
+                data.onDropSuccess(spr, dropZone);
+              }
+
+              manager.currentDrag = null;
+              return result;
+            }
+          }
+
+          if (data.onDropFail) {
+            data.onDropFail(spr, originalParent, originalPosition);
+          }
+
+          manager.currentDrag = null;
+          return false;
+        }
+      });
+
+      manager.draggables.push(sprite);
+    },
+
+    addDropZone(container, options = {}) {
+      createDropZone(container, options);
+      manager.dropZones.push(container);
+    },
+
+    removeDraggable(sprite) {
+      removeDraggable(sprite);
+      const index = manager.draggables.indexOf(sprite);
+      if (index > -1) {
+        manager.draggables.splice(index, 1);
+      }
+    },
+
+    removeDropZone(container) {
+      const index = manager.dropZones.indexOf(container);
+      if (index > -1) {
+        manager.dropZones.splice(index, 1);
+      }
+    },
+
+    clear() {
+      manager.draggables.forEach(sprite => removeDraggable(sprite));
+      manager.draggables = [];
+      manager.dropZones = [];
+      manager.currentDrag = null;
+    }
+  };
+
+  return manager;
+}
+
+// ===== UTILITY FUNCTIONS =====
+
+// randomRange(min, max) -> number
+function randomRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+// randomInt(min, max) -> number
+function randomInt(min, max) {
+  return Math.floor(randomRange(min, max + 1));
+}
+
+// randomChoice(array) -> any
+function randomChoice(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// distance(obj1, obj2) -> number
+function distance(obj1, obj2) {
+  const dx = obj1.x - obj2.x;
+  const dy = obj1.y - obj2.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// angleBetween(obj1, obj2) -> number
+// Returns angle in radians
+function angleBetween(obj1, obj2) {
+  return Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
+}
+
+// moveTowards(object, target, speed) -> void
+function moveTowards(object, target, speed) {
+  const angle = angleBetween(object, target);
+  object.x += Math.cos(angle) * speed;
+  object.y += Math.sin(angle) * speed;
+}
+
+// clamp(value, min, max) -> number
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+// lerp(start, end, t) -> number
+function lerp(start, end, t) {
+  return start + (end - start) * t;
+}
+
+
+// ===== ASSET MAP =====
+const __ASSET_MAP__ = {
+  "player_hero": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/6b69b02b1054e14e208e5f2fc679e293.png",
+    "width": 249,
+    "height": 715,
+    "description": "A heroic male character wearing traditional white Arabic thobe and keffiyeh, with a determined expression, standing and facing right. Stylized art."
+  },
+  "desert_background": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/251ec0e1273961a053b4a1abd919fa9e.png",
+    "width": 864,
+    "height": 640,
+    "description": "A vibrant desert landscape at sunset, featuring distant sand dunes, a few stylized palm trees, and an ornate Arabic palace silhouette on the horizon. The sky is a gradient of orange, pink, and purple. Stylized art."
+  },
+  "sandstone_platform": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/77d04360eb17e6a7733f08c9bc2e8ae2.png",
+    "width": 512,
+    "height": 512,
+    "description": "Light brown sandstone block texture with subtle carvings."
+  },
+  "desert_scorpion_enemy": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/4ad9c2516112b0cd743269e0d2bda581.png",
+    "width": 468,
+    "height": 452,
+    "description": "A small, stylized desert scorpion enemy with a purple body and glowing green eyes, facing right. Its tail is curled upwards, ready to strike. Stylized art."
+  },
+  "golden_coin": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/2d2355457edf0ec5f7b9631d86546879.png",
+    "width": 458,
+    "height": 469,
+    "description": "A shiny, ornate golden coin with Arabic calligraphy symbols etched into its surface. Stylized art."
+  },
+  "magic_lamp_goal": {
+    "url": "https://storage.googleapis.com/scraper_ludo/user_images_prod/98ef6417e9dbc3970b967d61b305b4e0.png",
+    "width": 461,
+    "height": 504,
+    "description": "An intricately designed golden magic lamp, emitting a soft, ethereal glow. It stands upright on a small, decorative cushion. Stylized art."
+  }
+};
+
+// ===== GAME CODE =====
+    const app = new PIXI.Application({
+  width: 800,
+  height: 600,
+  backgroundColor: 0x1099bb,
+  antialias: true,
+  resolution: 1 // ALWAYS force the resolution to 1 to prevent UI placement issues
+});
+document.body.appendChild(app.view);
+
+    class Game {
+    constructor() {
+        this.player = null;
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+        this.goal = null;
+        this.worldContainer = null;
+        this.camera = { x: 0, y: 0 };
+        this.lives = 3;
+        this.score = 0;
+        this.currentLevel = 1;
+        this.gameActive = true;
+		
+		this.worldWidth = 2600;
+		this.gameOverOverlay = null;
+		this.difficulty = 'moderate'; 
+        this.enemyBaseSpeed = 2; 
+		this.gameLevel = 1;
+		this.lives = 3;
+    }
+    setup() {
+        this.worldContainer = new PIXI.Container();
+        app.stage.addChild(this.worldContainer);
+        //const background = createSprite('desert_background', { scale: 1.5 });
+		const background = this.createBackground();
+        this.worldContainer.addChild(background);
+        this.player = createSprite('player_hero', { x: 200, y: 300, height: 80 });
+        this.player.velocity = { x: 0, y: 0 };
+        this.player.isJumping = false;
+        this.player.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.player);
+        this.createLevel1();
+        const scoreText = createText(`Score: ${this.score} | Lives: ${this.lives} | Level: ${this.gameLevel} `, {
+            fontSize: 24,
+            fill: 0xffffff
+        }, { x: 10, y: 10 });
+        scoreText.zIndex = 100;
+        app.stage.addChild(scoreText);
+        this.scoreText = scoreText;
+    }
+	
+	getEnemySpeed() {
+		// difficulty multiplier
+		let diffMult = 1;
+		if (this.difficulty === 'easy') diffMult = 0.7;
+		else if (this.difficulty === 'hard') diffMult = 1.3;
+		else if (this.difficulty === 'extreem') diffMult = 4.3;
+
+		// each level adds a small bonus
+		const levelBonus = 0.2 * (this.currentLevel - 1); // 0 for level 1, +0.2, +0.4, ...
+
+		return this.enemyBaseSpeed * diffMult + levelBonus;
+	}
+
+	createLevel1() {
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+		this.gameLevel = 1;
+        const platformData = [
+            { x: 0, y: 500, width: 300 },
+            { x: 400, y: 450, width: 200 },
+            { x: 650, y: 400, width: 150 },
+            { x: 850, y: 500, width: 300 },
+            { x: 1200, y: 350, width: 200 },
+            { x: 1450, y: 450, width: 200 },
+            { x: 1700, y: 400, width: 150 },
+            { x: 1900, y: 300, width: 200 }
+        ];
+        platformData.forEach(data => {
+            const platform = createTilingSprite('sandstone_platform', data.width, 50, { 
+                x: data.x, 
+                y: data.y 
+            });
+            platform.userData = { grounded: false };
+            this.worldContainer.addChild(platform);
+            this.platforms.push(platform);
+        });
+        this.enemies = [];
+        const enemyData = [
+            { x: 500, y: 450, direction: 1, range: 100 },
+            { x: 950, y: 500, direction: -1, range: 150 },
+            { x: 1300, y: 350, direction: 1, range: 100 },
+            { x: 1600, y: 450, direction: -1, range: 120 }
+        ];
+        enemyData.forEach(data => {
+            const enemy = createSprite('desert_scorpion_enemy', { 
+                x: data.x, 
+                y: data.y, 
+                height: 40 
+            });
+            enemy.velocity = 0;
+            enemy.direction = data.direction;
+            enemy.startX = data.x;
+            enemy.range = data.range;
+            enemy.anchor.set(0.5, 1);
+            enemy.isEnemy = true;
+            this.worldContainer.addChild(enemy);
+            this.enemies.push(enemy);
+			
+        });
+        const coinPositions = [
+            { x: 480, y: 380 }, { x: 520, y: 380 },
+            { x: 700, y: 330 }, { x: 750, y: 330 },
+            { x: 950, y: 430 }, { x: 1000, y: 430 },
+            { x: 1300, y: 280 }, { x: 1350, y: 280 }, { x: 1400, y: 280 },
+            { x: 1950, y: 230 }
+        ];
+        coinPositions.forEach(pos => {
+            const coin = createSprite('golden_coin', { 
+                x: pos.x, 
+                y: pos.y, 
+                width: 30 
+            });
+            coin.rotation = 0;
+            this.worldContainer.addChild(coin);
+            this.coins.push(coin);
+        });
+        this.goal = createSprite('magic_lamp_goal', { 
+            x: 2000, 
+            y: 230, 
+            width: 80 
+        });
+        this.goal.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.goal);
+    }
+    handleInput() {
+        if (!this.gameActive) return;
+        this.player.velocity.x = 0;
+        if (isKeyDown('ArrowLeft')) {
+            this.player.velocity.x = -5;
+        }
+        if (isKeyDown('ArrowRight')) {
+            this.player.velocity.x = 5;
+        }
+        if (isKeyDown(' ') && !this.player.isJumping) {
+            this.player.velocity.y = -15;
+            this.player.isJumping = true;
+        }
+    }
+    updatePlayer(delta) {
+        this.player.velocity.y += 0.8;
+        this.player.y += this.player.velocity.y;
+        this.player.x += this.player.velocity.x;
+        let onPlatform = false;
+        this.platforms.forEach(platform => {
+            if (this.player.x + 20 > platform.x && 
+                this.player.x - 20 < platform.x + platform.width) {
+                if (this.player.y >= platform.y - 5 && 
+                    this.player.y <= platform.y + 20 &&
+                    this.player.velocity.y > 0) {
+                    this.player.y = platform.y;
+                    this.player.velocity.y = 0;
+                    this.player.isJumping = false;
+                    onPlatform = true;
+                }
+            }
+        });
+        if (!onPlatform && this.player.y < 600) {
+            this.player.isJumping = true;
+        }
+        this.player.x = Math.max(20, Math.min(this.player.x, this.worldWidth - 20));
+
+        if (this.player.y > 600) {
+            this.loseLife();
+        }
+    }
+	updateEnemies() {
+		const speed = this.getEnemySpeed();
+		this.enemies.forEach(enemy => {
+			const minX = enemy.minX ?? (enemy.startX - enemy.range);
+			const maxX = enemy.maxX ?? (enemy.startX + enemy.range);
+
+			// use dynamic speed instead of a hard-coded "2"
+			enemy.x += enemy.direction * speed;
+
+			if (enemy.x <= minX || enemy.x >= maxX) {
+				enemy.direction *= -1;
+				enemy.x = Math.max(minX, Math.min(enemy.x, maxX));
+			}
+
+			// collision with player
+			if (spriteCollision(this.player, enemy)) {
+				if (this.player.velocity.y > 0 &&
+					this.player.y < enemy.y - 20) {
+					// stomp enemy
+					const index = this.enemies.indexOf(enemy);
+					if (index > -1) {
+						this.worldContainer.removeChild(enemy);
+						this.enemies.splice(index, 1);
+						this.score += 100;
+					}
+					this.player.velocity.y = -10;
+				} else {
+					this.loseLife();
+				}
+			}
+		});
+	}
+
+    updateCoins() {
+        this.coins = this.coins.filter(coin => {
+            coin.rotation += 0.1;
+            if (spriteCollision(this.player, coin)) {
+                this.worldContainer.removeChild(coin);
+                this.score += 50;
+                return false;
+            }
+            return true;
+        });
+    }
+    checkGoal() {
+        if (this.goal && spriteCollision(this.player, this.goal)) {
+            this.levelComplete();
+        }
+    }
+    getPlatformAt(x, y) {
+        for (let platform of this.platforms) {
+            if (x >= platform.x - 20 && x <= platform.x + platform.width + 20 &&
+                y >= platform.y - 60 && y <= platform.y + 20) {
+                return platform;
+            }
+        }
+        return null;
+    }
+	
+    updateCamera() {
+		const targetX = this.player.x - app.screen.width / 2;
+		this.camera.x += (targetX - this.camera.x) * 0.1;
+
+		// ?? maximum camera X = world width - screen width
+		const maxCameraX = this.worldWidth - app.screen.width;
+		this.camera.x = Math.max(0, Math.min(this.camera.x, maxCameraX));
+
+		this.worldContainer.x = -this.camera.x;
+	}
+
+    loseLife() {
+        this.lives--;
+        if (this.lives <= 0) {
+            this.gameOver();
+        } else {
+            this.resetPlayer();
+        }
+    }
+    resetPlayer() {
+        this.player.x = 200;
+        this.player.y = 300;
+        this.player.velocity = { x: 0, y: 0 };
+        this.player.isJumping = false;
+    }
+levelComplete() {
+    this.gameActive = false;
+
+    const finishedLevel = this.currentLevel;
+    this.currentLevel++;
+
+    const isFinal = this.currentLevel > 5;   // assuming 5 is your last level
+
+    const onNext = () => {
+        app.stage.removeChild(overlay);
+
+        if (isFinal) {
+            // all levels done ? restart whole game
+            this.restart();
+        } else {
+            // go to next level
+            this.startNextLevel();
+        }
+    };
+
+    const overlay = showLevelComplete(app, {
+        level: finishedLevel,
+        score: this.score,
+        isFinal,
+        onNext
+    });
+
+    // allow SPACE key as well
+    const spaceHandler = (e) => {
+        if (e.code === 'Space' && !this.gameActive) {
+            document.removeEventListener('keydown', spaceHandler);
+            onNext();
+        }
+    };
+    setTimeout(() => document.addEventListener('keydown', spaceHandler), 100);
+
+    app.stage.addChild(overlay);
+}
+
+    gameOver() {
+		this.gameActive = false;
+
+		// create overlay UI
+		if (this.gameOverOverlay) {
+			app.stage.removeChild(this.gameOverOverlay);
+			this.gameOverOverlay.destroy({ children: true });
+			this.gameOverOverlay = null;
+		}
+
+		this.gameOverOverlay = showGameOver(app, {
+			title: 'Game Over',
+			score: this.score,
+			onRestart: () => this.restart(),
+			onMainMenu: () => this.goToMainMenu()
+		});
+
+		app.stage.addChild(this.gameOverOverlay);
+	}
+
+	restart() {
+		// remove the game-over overlay
+		if (this.gameOverOverlay) {
+			app.stage.removeChild(this.gameOverOverlay);
+			this.gameOverOverlay.destroy({ children: true });
+			this.gameOverOverlay = null;
+		}
+
+		// remove old world + HUD
+		if (this.worldContainer) {
+			app.stage.removeChild(this.worldContainer);
+			this.worldContainer.destroy({ children: true });
+			this.worldContainer = null;
+		}
+		if (this.scoreText) {
+			app.stage.removeChild(this.scoreText);
+			this.scoreText.destroy();
+			this.scoreText = null;
+		}
+
+		// reset state
+		if(this.difficulty == 'extreem' ){
+			this.lives = 1;
+		}else{
+			this.lives = 3;
+		}
+		this.score = 0;
+		this.currentLevel = 1;
+		this.camera = { x: 0, y: 0 };
+		this.gameActive = true;
+
+		// build everything again
+		this.setup();
+	}
+
+    update(delta) {
+        if (!this.gameActive) return;
+        this.handleInput();
+        this.updatePlayer(delta);
+        this.updateEnemies();
+        this.updateCoins();
+        this.checkGoal();
+        this.updateCamera();
+        this.scoreText.text = `Score: ${this.score} | Lives: ${this.lives} | Level: ${this.gameLevel}`;
+    }
+
+	startNextLevel() {
+		// reset player state
+		this.player.x = 200;
+		this.player.y = 300;
+		this.player.velocity = { x: 0, y: 0 };
+		this.player.isJumping = false;
+
+		this.camera.x = 0;
+		this.worldContainer.x = 0;
+		this.gameActive = true;
+
+		// keep a reference to the existing player before clearing children
+		const player = this.player;
+
+		this.worldContainer.removeChildren();
+
+		const background = this.createBackground();
+		this.worldContainer.addChild(background);
+
+		// build level geometry
+		switch (this.currentLevel) {
+			case 2: this.createLevel2(); break;
+			case 3: this.createLevel3(); break;
+			case 4: this.createLevel4(); break;
+			case 5: this.createLevel5(); break;
+			default: this.createLevel1();
+		}
+
+		// add player on top of the level
+		this.worldContainer.addChild(player);
+	}
+
+
+createLevel2() {
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+        this.gameLevel = 2;
+        const platformData = [
+            { x: 0, y: 500, width: 250 },
+            { x: 300, y: 450, width: 150 },
+            { x: 500, y: 400, width: 100 },
+            { x: 650, y: 350, width: 150 },
+            { x: 850, y: 300, width: 200 },
+            { x: 1100, y: 450, width: 180 },
+            { x: 1330, y: 400, width: 120 },
+            { x: 1500, y: 350, width: 150 },
+            { x: 1700, y: 250, width: 200 },
+            { x: 1950, y: 400, width: 250 }
+        ];
+        
+        platformData.forEach(data => {
+            const platform = createTilingSprite('sandstone_platform', data.width, 50, { 
+                x: data.x, 
+                y: data.y 
+            });
+            platform.userData = { grounded: false };
+            this.worldContainer.addChild(platform);
+            this.platforms.push(platform);
+        });
+
+        const enemyData = [
+            { x: 375, y: 450, direction: 1, range: 80 },
+            { x: 725, y: 350, direction: -1, range: 100 },
+            { x: 1190, y: 450, direction: 1, range: 120 },
+            { x: 950, y: 300, direction: -1, range: 60 },
+            { x: 1390, y: 400, direction: 1, range: 80 }
+        ];
+        
+        enemyData.forEach(data => {
+            const enemy = createSprite('desert_scorpion_enemy', { 
+                x: data.x, 
+                y: data.y, 
+                height: 40 
+            });
+            enemy.velocity = 0;
+            enemy.direction = data.direction;
+            enemy.startX = data.x;
+            enemy.range = data.range;
+            enemy.anchor.set(0.5, 1);
+            enemy.isEnemy = true;
+            this.worldContainer.addChild(enemy);
+            this.enemies.push(enemy);
+        });
+
+        const coinPositions = [
+            { x: 320, y: 380 }, { x: 370, y: 380 },
+            { x: 550, y: 330 }, { x: 600, y: 330 },
+            { x: 900, y: 230 }, { x: 950, y: 230 }, { x: 1000, y: 230 },
+            { x: 1150, y: 380 }, { x: 1200, y: 380 },
+            { x: 1550, y: 280 }, { x: 1600, y: 280 },
+            { x: 1800, y: 180 }, { x: 1850, y: 180 }, { x: 1900, y: 180 },
+            { x: 2050, y: 330 }
+        ];
+        
+        coinPositions.forEach(pos => {
+            const coin = createSprite('golden_coin', { 
+                x: pos.x, 
+                y: pos.y, 
+                width: 30 
+            });
+            coin.rotation = 0;
+            this.worldContainer.addChild(coin);
+            this.coins.push(coin);
+        });
+
+        this.goal = createSprite('magic_lamp_goal', { 
+            x: 2100, 
+            y: 330, 
+            width: 80 
+        });
+        this.goal.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.goal);
+    }
+
+createLevel3() {
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+		this.gameLevel = 3;
+        
+        const platformData = [
+            { x: 0, y: 550, width: 200 },
+            { x: 250, y: 500, width: 120 },
+            { x: 420, y: 450, width: 100 },
+            { x: 570, y: 400, width: 80 },
+            { x: 700, y: 350, width: 100 },
+            { x: 850, y: 300, width: 150 },
+            { x: 1050, y: 250, width: 100 },
+            { x: 1200, y: 300, width: 120 },
+            { x: 1370, y: 350, width: 100 },
+            { x: 1520, y: 400, width: 150 },
+            { x: 1720, y: 450, width: 100 },
+            { x: 1870, y: 500, width: 120 },
+            { x: 2040, y: 400, width: 200 }
+        ];
+        
+        platformData.forEach(data => {
+            const platform = createTilingSprite('sandstone_platform', data.width, 50, { 
+                x: data.x, 
+                y: data.y 
+            });
+            platform.userData = { grounded: false };
+            this.worldContainer.addChild(platform);
+            this.platforms.push(platform);
+        });
+
+        const enemyData = [
+            { x: 310, y: 500, direction: 1, range: 60 },
+            { x: 470, y: 450, direction: -1, range: 50 },
+            { x: 750, y: 350, direction: 1, range: 70 },
+            { x: 925, y: 300, direction: -1, range: 100 },
+            { x: 1260, y: 300, direction: 1, range: 80 },
+            { x: 1595, y: 400, direction: -1, range: 100 },
+            { x: 1930, y: 500, direction: 1, range: 60 }
+        ];
+        
+        enemyData.forEach(data => {
+            const enemy = createSprite('desert_scorpion_enemy', { 
+                x: data.x, 
+                y: data.y, 
+                height: 40 
+            });
+            enemy.velocity = 0;
+            enemy.direction = data.direction;
+            enemy.startX = data.x;
+            enemy.range = data.range;
+            enemy.anchor.set(0.5, 1);
+            enemy.isEnemy = true;
+            this.worldContainer.addChild(enemy);
+            this.enemies.push(enemy);
+        });
+
+        const coinPositions = [
+            { x: 280, y: 430 }, { x: 320, y: 430 },
+            { x: 450, y: 380 },
+            { x: 730, y: 280 }, { x: 780, y: 280 }, { x: 830, y: 280 },
+            { x: 1080, y: 180 },
+            { x: 1250, y: 230 }, { x: 1300, y: 230 },
+            { x: 1550, y: 330 }, { x: 1600, y: 330 }, { x: 1650, y: 330 },
+            { x: 1750, y: 380 },
+            { x: 2100, y: 330 }, { x: 2150, y: 330 }, { x: 2200, y: 330 }
+        ];
+        
+        coinPositions.forEach(pos => {
+            const coin = createSprite('golden_coin', { 
+                x: pos.x, 
+                y: pos.y, 
+                width: 30 
+            });
+            coin.rotation = 0;
+            this.worldContainer.addChild(coin);
+            this.coins.push(coin);
+        });
+
+        this.goal = createSprite('magic_lamp_goal', { 
+            x: 2200, 
+            y: 330, 
+            width: 80 
+        });
+        this.goal.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.goal);
+    }
+
+createLevel4() {
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+		this.gameLevel = 4;
+        
+        const platformData = [
+            { x: 0, y: 500, width: 200 },
+            { x: 230, y: 550, width: 100 },
+            { x: 380, y: 480, width: 80 },
+            { x: 510, y: 420, width: 100 },
+            { x: 660, y: 360, width: 80 },
+            { x: 790, y: 300, width: 120 },
+            { x: 960, y: 240, width: 100 },
+            { x: 1110, y: 180, width: 150 },
+            { x: 1310, y: 240, width: 100 },
+            { x: 1460, y: 300, width: 120 },
+            { x: 1630, y: 360, width: 100 },
+            { x: 1780, y: 420, width: 150 },
+            { x: 1980, y: 480, width: 120 },
+            { x: 2150, y: 400, width: 200 }
+        ];
+        
+        platformData.forEach(data => {
+            const platform = createTilingSprite('sandstone_platform', data.width, 50, { 
+                x: data.x, 
+                y: data.y 
+            });
+            platform.userData = { grounded: false };
+            this.worldContainer.addChild(platform);
+            this.platforms.push(platform);
+        });
+
+        const enemyData = [
+            { x: 280, y: 550, direction: 1, range: 50 },
+            { x: 420, y: 480, direction: -1, range: 40 },
+            { x: 700, y: 360, direction: 1, range: 40 },
+            { x: 850, y: 300, direction: -1, range: 60 },
+            { x: 1185, y: 180, direction: 1, range: 75 },
+            { x: 1350, y: 240, direction: -1, range: 70 },
+            { x: 1680, y: 360, direction: 1, range: 80 },
+            { x: 1850, y: 420, direction: -1, range: 100 },
+            { x: 2030, y: 480, direction: 1, range: 70 }
+        ];
+        
+        enemyData.forEach(data => {
+            const enemy = createSprite('desert_scorpion_enemy', { 
+                x: data.x, 
+                y: data.y, 
+                height: 40 
+            });
+            enemy.velocity = 0;
+            enemy.direction = data.direction;
+            enemy.startX = data.x;
+            enemy.range = data.range;
+            enemy.anchor.set(0.5, 1);
+            enemy.isEnemy = true;
+            this.worldContainer.addChild(enemy);
+            this.enemies.push(enemy);
+        });
+
+        const coinPositions = [
+			{ x: 260,  y: 480 }, { x: 300,  y: 480 },
+			{ x: 410,  y: 410 },
+			{ x: 560,  y: 350 }, { x: 600,  y: 350 },
+			{ x: 840,  y: 230 }, { x: 890,  y: 230 },
+			{ x: 940,  y: 230 }, { x: 990,  y: 230 },
+			{ x: 1160, y: 130 }, { x: 1210, y: 130 },
+			{ x: 1500, y: 230 }, { x: 1550, y: 230 },
+			{ x: 1710, y: 290 }, { x: 1760, y: 290 },
+			{ x: 2060, y: 380 },
+			{ x: 2200, y: 330 }, { x: 2250, y: 330 }, { x: 2300, y: 330 }
+		];
+        
+        
+		coinPositions.forEach(pos => {
+			const coin = createSprite('golden_coin', { 
+				x: pos.x, 
+				y: pos.y, 
+				width: 30 
+			});
+			coin.rotation = 0;
+			this.worldContainer.addChild(coin);
+			this.coins.push(coin);
+		});
+
+        this.goal = createSprite('magic_lamp_goal', { 
+            x: 2300, 
+            y: 330, 
+            width: 80 
+        });
+        this.goal.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.goal);
+    }
+
+createLevel5() {
+        this.platforms = [];
+        this.enemies = [];
+        this.coins = [];
+		this.gameLevel = 5;
+        
+        const platformData = [
+            { x: 0, y: 600, width: 150 },
+            { x: 200, y: 550, width: 100 },
+            { x: 350, y: 500, width: 80 },
+            { x: 480, y: 450, width: 100 },
+            { x: 630, y: 400, width: 80 },
+            { x: 760, y: 350, width: 100 },
+            { x: 910, y: 300, width: 80 },
+            { x: 1040, y: 250, width: 120 },
+            { x: 1210, y: 200, width: 100 },
+            { x: 1360, y: 150, width: 150 },
+            { x: 1560, y: 200, width: 100 },
+            { x: 1710, y: 250, width: 120 },
+            { x: 1880, y: 300, width: 100 },
+            { x: 2030, y: 350, width: 150 },
+            { x: 2230, y: 400, width: 120 },
+            { x: 2400, y: 300, width: 200 }
+        ];
+        
+        platformData.forEach(data => {
+            const platform = createTilingSprite('sandstone_platform', data.width, 50, { 
+                x: data.x, 
+                y: data.y 
+            });
+            platform.userData = { grounded: false };
+            this.worldContainer.addChild(platform);
+            this.platforms.push(platform);
+        });
+
+        const enemyData = [
+            { x: 230, y: 550, direction: 1, range: 50 },
+            { x: 390, y: 500, direction: -1, range: 40 },
+            { x: 530, y: 450, direction: 1, range: 60 },
+            { x: 670, y: 400, direction: -1, range: 50 },
+            { x: 810, y: 350, direction: 1, range: 70 },
+            { x: 1100, y: 250, direction: -1, range: 80 },
+            { x: 1250, y: 200, direction: 1, range: 70 },
+            { x: 1430, y: 150, direction: -1, range: 100 },
+            { x: 1610, y: 200, direction: 1, range: 80 },
+            { x: 1770, y: 250, direction: -1, range: 90 },
+            { x: 1930, y: 300, direction: 1, range: 100 },
+            { x: 2100, y: 350, direction: -1, range: 120 },
+            { x: 2280, y: 400, direction: 1, range: 80 }
+        ];
+        
+        enemyData.forEach(data => {
+            const enemy = createSprite('desert_scorpion_enemy', { 
+                x: data.x, 
+                y: data.y, 
+                height: 40 
+            });
+            enemy.velocity = 0;
+            enemy.direction = data.direction;
+            enemy.startX = data.x;
+            enemy.range = data.range;
+            enemy.anchor.set(0.5, 1);
+            enemy.isEnemy = true;
+            this.worldContainer.addChild(enemy);
+            this.enemies.push(enemy);
+        });
+
+        const coinPositions = [
+            { x: 230, y: 480 }, { x: 270, y: 480 },
+            { x: 390, y: 430 },
+            { x: 530, y: 380 }, { x: 580, y: 380 },
+            { x: 810, y: 280 }, { x: 860, y: 280 }, { x: 910, y: 280 },
+            { x: 1100, y: 180 }, { x: 1150, y: 180 },
+            { x: 1400, y: 100 }, { x: 1450, y: 100 }, { x: 1500, y: 100 },
+            { x: 1630, y: 150 }, { x: 1680, y: 150 },
+            { x: 1800, y: 180 }, { x: 1850, y: 180 },
+            { x: 2080, y: 280 }, { x: 2130, y: 280 },
+            { x: 2450, y: 230 }, { x: 2500, y: 230 }, { x: 2550, y: 230 }
+        ];
+        
+        coinPositions.forEach(pos => {
+            const coin = createSprite('golden_coin', { 
+                x: pos.x, 
+                y: pos.y, 
+                width: 30 
+            });
+            coin.rotation = 0;
+            this.worldContainer.addChild(coin);
+            this.coins.push(coin);
+        });
+
+        this.goal = createSprite('magic_lamp_goal', { 
+            x: 2500, 
+            y: 230, 
+            width: 80 
+        });
+        this.goal.anchor.set(0.5, 1);
+        this.worldContainer.addChild(this.goal);
+    }
+	createBackground() {
+		const worldWidth = 2600; // a bit wider than your whole level
+		const background = createTilingSprite(
+			'desert_background',
+			worldWidth,
+			app.screen.height,
+			{ x: 0, y: 0 }
+		);
+		return background;
+	}
+	
+	showStartMenu() {
+		this.gameActive = false;
+
+		const overlay = new PIXI.Container();
+
+		// dark background
+		const bg = new PIXI.Graphics();
+		bg.beginFill(0x000000, 0.8);
+		bg.drawRect(0, 0, app.screen.width, app.screen.height);
+		bg.endFill();
+		overlay.addChild(bg);
+
+		// title
+		const title = createText(
+			'Desert Oasis Adventure',
+			{ fontSize: 48, fill: 0xffd700 },
+			{ x: app.screen.width / 2, y: app.screen.height / 2 - 140, anchor: 0.5 }
+		);
+		overlay.addChild(title);
+
+		// subtitle
+		const subtitle = createText(
+			'Choose difficulty',
+			{ fontSize: 28, fill: 0xffffff },
+			{ x: app.screen.width / 2, y: app.screen.height / 2 - 80, anchor: 0.5 }
+		);
+		overlay.addChild(subtitle);
+
+		const difficulties = [
+			{ label: 'Easy',     value: 'easy',     offset: -40 },
+			{ label: 'Moderate', value: 'moderate', offset:  20 },
+			{ label: 'Hard',     value: 'hard',     offset:  80 },
+			{ label: 'Extreem',  value: 'extreem',  offset:  180 },
+		];
+
+		difficulties.forEach(info => {
+			const button = createButton(
+				info.label,
+				{ x: app.screen.width / 2, y: app.screen.height / 2 + info.offset, anchor: 0.5 },
+				() => {
+					// set difficulty based on selection
+					this.difficulty = info.value;
+
+					// reset game state (but KEEP difficulty)
+					if(this.difficulty == 'extreem' ){
+						this.lives = 1;
+					}else{
+						this.lives = 3;
+					}
+					
+					this.score = 0;
+					this.currentLevel = 1;
+					this.camera = { x: 0, y: 0 };
+					this.gameActive = true;
+
+					// remove menu
+					app.stage.removeChild(overlay);
+					overlay.destroy({ children: true });
+
+					// now actually build the world
+					this.setup();
+				},
+				{ fontSize: 32, fill: 0xffffff }
+			);
+			overlay.addChild(button);
+		});
+
+		app.stage.addChild(overlay);
+	}
+	
+	goToMainMenu() {
+		// remove game-over overlay
+		if (this.gameOverOverlay) {
+			app.stage.removeChild(this.gameOverOverlay);
+			this.gameOverOverlay.destroy({ children: true });
+			this.gameOverOverlay = null;
+		}
+
+		// remove world & HUD
+		if (this.worldContainer) {
+			app.stage.removeChild(this.worldContainer);
+			this.worldContainer.destroy({ children: true });
+			this.worldContainer = null;
+		}
+		if (this.scoreText) {
+			app.stage.removeChild(this.scoreText);
+			this.scoreText.destroy();
+			this.scoreText = null;
+		}
+
+		// reset basic state (keep difficulty if you’re using it)
+		this.lives = 3;
+		this.score = 0;
+		this.currentLevel = 1;
+		this.camera = { x: 0, y: 0 };
+		this.gameActive = false;
+
+		// show your difficulty/start screen again
+		this.showStartMenu();
+	}
+	
+	
+
+
+}
+
+    
+// Preload all assets, then start the game
+preloadAssets(__ASSET_MAP__).then(() => {
+  let game = new Game(app); // Create the game instance
+  game.app = app;
+  if (game.showStartMenu) game.showStartMenu();
+  app.ticker.add((delta) => {
+    game.update(delta);
+  });
+});
+
+    </script>
+</body>
+</html>
