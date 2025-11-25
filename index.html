@@ -95,6 +95,47 @@
             background: rgba(0, 0, 0, 0.9);
             color: rgba(255, 255, 255, 0.9);
         }
+		
+		/* --- Mobile touch controls --- */
+		.touch-controls {
+			position: fixed;
+			bottom: 16px;
+			left: 0;
+			right: 0;
+			display: none;              /* hidden by default */
+			justify-content: center;
+			gap: 16px;
+			z-index: 1001;
+			pointer-events: none;       /* container itself doesn't block the canvas */
+		}
+
+		.touch-controls button {
+			pointer-events: auto;       /* buttons DO receive touches */
+			width: 56px;
+			height: 56px;
+			border-radius: 50%;
+			border: 1px solid rgba(255, 255, 255, 0.4);
+			background: rgba(0, 0, 0, 0.6);
+			color: #fff;
+			font-size: 24px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* little pressed effect */
+		.touch-controls button.active {
+			transform: scale(0.9);
+			background: rgba(255, 255, 255, 0.2);
+		}
+
+		/* ✅ Only show on touch devices (phones/tablets, incl iPad) */
+		@media (hover: none) and (pointer: coarse) {
+			.touch-controls {
+				display: flex;
+			}
+		}
+
     </style>
 </head>
 <body>
@@ -108,9 +149,18 @@
         <p class="game-description"><strong>How to Play:</strong> Use ArrowLeft/ArrowRight to move, Spacebar to jump. Defeat enemies by jumping on them. Collect coins for points. Reach the magic lamp to complete the level.</p>
     </div>
     <div id="gameContainer"></div>
-    <a href="https://ludo.ai" target="_blank" class="ludo-footer">
-        Made with Ludo.ai
-    </a>
+
+	<!-- Touch controls (shown only on mobile/tablet by CSS) -->
+	<div class="touch-controls" id="touchControls">
+		<button id="btn-left">◀</button>
+		<button id="btn-right">▶</button>
+		<button id="btn-jump">⤒</button>
+	</div>
+
+	<a href="https://ludo.ai" target="_blank" class="ludo-footer">
+		Made with Ludo.ai
+	</a>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.4.3/pixi.min.js" integrity="sha512-o3fAFcbCbTTJRFRNx4vByRZVtdKYF9uklctNjDXrN1JjT00rJxCCyNJSDi35rPBEqzWvYplcHLlEmyW34Ado8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="https://cdn.jsdelivr.net/npm/pixi-filters@5.3.0/dist/browser/pixi-filters.min.js"></script>
     <script type="module">
         // Ludo.ai Playable Game
@@ -1190,6 +1240,7 @@ document.body.appendChild(app.view);
         this.enemyBaseSpeed = 2; 
 		this.gameLevel = 1;
 		this.lives = 3;
+		this.time = 0;
     }
     setup() {
         this.worldContainer = new PIXI.Container();
@@ -1312,32 +1363,51 @@ document.body.appendChild(app.view);
         }
     }
     updatePlayer(delta) {
+        // gravity
         this.player.velocity.y += 0.8;
-        this.player.y += this.player.velocity.y;
+
+        // apply velocity
         this.player.x += this.player.velocity.x;
+        this.player.y += this.player.velocity.y;
+
         let onPlatform = false;
+
+        // simple platform collision
         this.platforms.forEach(platform => {
-            if (this.player.x + 20 > platform.x && 
-                this.player.x - 20 < platform.x + platform.width) {
-                if (this.player.y >= platform.y - 5 && 
-                    this.player.y <= platform.y + 20 &&
-                    this.player.velocity.y > 0) {
-                    this.player.y = platform.y;
-                    this.player.velocity.y = 0;
-                    this.player.isJumping = false;
-                    onPlatform = true;
-                }
+            // is player horizontally over this platform?
+            const withinX =
+                this.player.x + 20 > platform.x &&
+                this.player.x - 20 < platform.x + platform.width;
+
+            const platformTop = platform.y;
+            const falling = this.player.velocity.y > 0;
+            const withinY =
+                this.player.y >= platformTop - 5 &&
+                this.player.y <= platformTop + 20;
+
+            if (withinX && withinY && falling) {
+                // snap to top of platform
+                this.player.y = platformTop;
+                this.player.velocity.y = 0;
+                this.player.isJumping = false;
+                onPlatform = true;
             }
         });
+
+        // if not standing on any platform and not below the world, we are in the air
         if (!onPlatform && this.player.y < 600) {
             this.player.isJumping = true;
         }
+
+        // keep player inside world horizontally
         this.player.x = Math.max(20, Math.min(this.player.x, this.worldWidth - 20));
 
+        // fell off the world
         if (this.player.y > 600) {
             this.loseLife();
         }
     }
+
 	updateEnemies() {
 		const speed = this.getEnemySpeed();
 		this.enemies.forEach(enemy => {
@@ -1524,6 +1594,8 @@ levelComplete() {
         this.updateCoins();
         this.checkGoal();
         this.updateCamera();
+		this.time += delta;
+		this.updatePlayerVisuals(); 
         this.scoreText.text = `Score: ${this.score} | Lives: ${this.lives} | Level: ${this.gameLevel}`;
     }
 
@@ -2037,10 +2109,73 @@ createLevel5() {
 		this.showStartMenu();
 	}
 	
+	updatePlayerVisuals() {
+		const speed = Math.abs(this.player.velocity.x);
+		const t = this.time;
+
+		if (this.player.isJumping) {
+			// slight tilt in air
+			this.player.rotation = this.player.velocity.y < 0 ? -0.12 : 0.12;
+			// a bit squashed
+			this.player.scale.set(1.0, 0.9);
+		} else {
+			// back upright
+			this.player.rotation = 0;
+
+			if (speed > 0.5) {
+				// running: tiny squash & stretch to feel like a run cycle
+				const s = 1 + 0.07 * Math.sin(t * 0.4); // 0.93–1.07
+				this.player.scale.set(1.0 / s, s);
+			} else {
+				// idle: small slow breathing
+				const s = 1 + 0.03 * Math.sin(t * 0.2);
+				this.player.scale.set(1.0, s);
+			}
+		}
+	}
+
 	
 
 
 }
+
+// --- Touch controls -> fake keyboard presses ---
+function setupTouchControls() {
+  const controls = document.getElementById('touchControls');
+  if (!controls) return;
+
+  const bindButtonToKey = (buttonId, key) => {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+
+    const press = (e) => {
+      e.preventDefault();
+      __keyboard.keys[key] = true;
+      btn.classList.add('active');
+    };
+
+    const release = (e) => {
+      e.preventDefault();
+      __keyboard.keys[key] = false;
+      btn.classList.remove('active');
+    };
+
+    // For both touch and mouse (mouse helps with debugging in browser dev tools)
+    ['touchstart', 'mousedown'].forEach(ev =>
+      btn.addEventListener(ev, press, { passive: false })
+    );
+    ['touchend', 'touchcancel', 'mouseup', 'mouseleave'].forEach(ev =>
+      btn.addEventListener(ev, release)
+    );
+  };
+
+  bindButtonToKey('btn-left',  'ArrowLeft');
+  bindButtonToKey('btn-right', 'ArrowRight');
+  bindButtonToKey('btn-jump',  ' '); // spacebar for jump
+}
+
+// call it once everything is on the page
+setupTouchControls();
 
     
 // Preload all assets, then start the game
