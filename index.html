@@ -1352,10 +1352,10 @@ document.body.appendChild(app.view);
         if (!this.gameActive) return;
         this.player.velocity.x = 0;
         if (isKeyDown('ArrowLeft')) {
-            this.player.velocity.x = -5;
+            this.player.velocity.x = -3;
         }
         if (isKeyDown('ArrowRight')) {
-            this.player.velocity.x = 5;
+            this.player.velocity.x = 3;
         }
         if (isKeyDown(' ') && !this.player.isJumping) {
             this.player.velocity.y = -15;
